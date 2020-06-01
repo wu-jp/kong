@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="../vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <!-- 绑定class -->
+    <div :class="{red: isRed, yellow: isYellow}"></div>
+    <div :class="['red', {green: true, yellow: true}, 'pink']"></div>
+
+    <!-- 绑定style -->
+    <div :style="{color: 'red', backgroundColor: 'pink'}">吴一</div>
+    <div :style="styleObj">吴二</div>
+    <div :style="[styleObj, styleObj1]">吴三</div>
+  </div>
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        isRed: true,
+        isYellow: true,
+        styleObj: {
+          color: 'yellow',
+          width: '100px',
+          backgroundColor: 'pink'
+        },
+        styleObj1: {
+          cursor: 'pointer'
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>

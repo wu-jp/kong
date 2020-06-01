@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="../vue.js"></script>
+</head>
+
+<body>
+  <div id="app">{{ msg }}</div>
+  <script>
+    //利用vm.$nextTick或Vue.nextTick，在页面重新渲染，DOM更新后，会立刻执行vm.$nextTick
+    const vm = new Vue({
+      el: '#app',
+      data: {
+        msg: '吴一',
+      }
+    })
+    vm.msg = '吴一超帅';
+    console.log(vm.msg);  // '吴一超帅'
+    console.log(vm.$el.innerHTML);  // '吴一'
+    vm.$nextTick(() => {
+      console.log(vm.$el.innerHTML);  // '吴一超帅'
+    })
+    Vue.nextTick(() => {
+      console.log(vm.$el.innerHTML);  // '吴一超帅'
+    })
+  </script>
+</body>
+
+</html>

@@ -27,6 +27,8 @@ function Person() {}
 console.log(Person === Person.prototype.constructor); //true
 ```
 
+![Alt text](./3.png)
+
 ```js
 function Person() {}
 
@@ -66,3 +68,63 @@ console.log(person.name); // Kevin
 但是万一还没有找到呢？原型的原型又是什么呢？
 
 ## 5.原型的原型
+
+在前面，我们已经讲了原型也是一个对象，既然是对象，我们就可以用最原始的方式创建它，那就是：
+
+```js
+var obj = new Object();
+obj.name = "Kevin";
+console.log(obj.name); // Kevin
+```
+
+其实原型对象就是通过 Object 构造函数生成的，结合之前所讲，实例的 `__proto__` 指向构造函数的 prototype ，所以我们再更新下关系图：
+
+![Alt text](./4.png)
+
+## 6.原型链
+
+那 Object.prototype 的原型呢？
+
+null，我们可以打印：
+
+```js
+console.log(Object.prototype.__proto__ === null); // true
+```
+
+然而 null 究竟代表了什么呢？
+
+> null 表示“没有对象”，即该处不应该有值
+
+所以 Object.prototype.`__proto__` 的值为 null 跟 Object.prototype 没有原型，其实表达了一个意思。
+
+所以查找属性的时候查到 Object.prototype 就可以停止查找了。
+
+最后一张关系图也可以更新为：
+
+![Alt text](./5.png)
+
+顺便还要说一下，图中由相互关联的原型组成的链状结构就是原型链，也就是蓝色的这条线。
+
+## 补充
+
+### constructor
+
+首先是 constructor 属性，我们看个例子：
+
+```JS
+function Person() {
+
+}
+var person = new Person();
+console.log(person.constructor === Person); // true
+```
+
+当获取 person.constructor 时，其实 person 中并没有 constructor 属性,当不能读取到 constructor 属性时，会从 person 的原型也就是 Person.prototype 中读取，正好原型中有该属性，所以：
+
+```js
+person.constructor === Person.prototype.constructor;
+```
+
+### `__proto__`
+
+其次是 `__proto__` ，绝大部分浏览器都支持这个非标准的方法访问原型，然而它并不存在于 Person.prototype 中，实际上，它是来自于 Object.prototype ，与其说是一个属性，不如说是一个 getter/setter，当使用 `obj.__proto__` 时，可以理解成返回了 `Object.getPrototypeOf(obj)`。

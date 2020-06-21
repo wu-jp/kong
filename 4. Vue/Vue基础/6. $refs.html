@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="../vue.js"></script>
+</head>
+<body>
+  <div id="app">
+    <h2 ref="father">ref</h2>
+    <ul>
+      <li v-for="item in peoples" ref="people"> {{item}} </li>
+    </ul>
+    <ref-global></ref-global>
+    <ref-local></ref-local>
+    
+  </div>
+  <script>
+    //全局组件
+    Vue.component('ref-global', {
+      template: `
+        <div class="child-global">
+          <p ref="global_child" @click="clickChild">全局组件</p>  
+        </div>
+      `,
+      methods: {
+        clickChild: function() {
+          console.log(this); // $el: div.child-global
+          console.log(this.$refs.global_child); // <p>全局组件</p>
+        }
+      }
+    })
+
+    //局部组件
+    var refLocal = {
+      template: `
+        <div class="child-local">
+          <p ref="local_child" @click="clickChildLocal">局部组件</p>  
+        </div>
+      `,
+      methods: {
+        clickChildLocal: function() {
+          console.log(this); // $el: div.child-local
+          console.log(this.$refs.local_child); // <p>局部组件</p>
+        }
+      }
+    }
+
+    new Vue({
+      el: '#app',
+      data:{
+        peoples: ['张三', '李四', '王五', '大婶儿', '老大爷']
+      },
+      components: {
+        "ref-local": refLocal
+      },
+      created() {
+        this.$nextTick(()=>{
+          console.log(this.$refs.father);
+          // <h2>ref</h2>
+        })
+      },
+      mounted() {
+        console.log(this.$refs.people);
+        // [li,li,li,li,li]
+      }
+    })
+  </script>
+</body>
+</html>

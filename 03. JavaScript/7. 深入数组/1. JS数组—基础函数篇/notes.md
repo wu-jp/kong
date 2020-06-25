@@ -9,7 +9,7 @@
 ```js
 var arr = [1, 2, 3];
 
-typeOf arr; //"object"
+typeof arr; //"object"
 Array.isArray(arr); //true
 ```
 

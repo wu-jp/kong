@@ -108,6 +108,7 @@
 
 <script>
 export default {
+  // 自定义指令
   directives: {
     "click-outside": {
       bind(el, binding, vnode) {

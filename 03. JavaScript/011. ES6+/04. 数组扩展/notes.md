@@ -526,3 +526,173 @@ console.log(entries.next().value); // [2, 'c']
 ```
 
 ## 8.数组实例方法 includes()
+
+Array.prototype.includes()方法返回一个布尔值，表示某个数组是否包含给定的值。
+
+```js
+[1,2,3].includes(2) //true
+[1,2,3].includes(4) //false
+[1,2,NaN].includes(NaN) //true
+```
+
+该方法还有第二个参数，表示搜索的起始位置，默认为0，如果为负数，表示倒数的位置，如果大于数组的长度，则会重新从0计算。
+
+```js
+[1,2,3].includes(3, 3) //false
+[1,2,3].includes(3, -1) //true
+```
+
+在这之前我们通常使用indexOf方法，检查是否包含某个值。
+
+```js
+if(arr.indexOf(el) !== -1) {
+  //...
+}
+```
+
+indexOf方法有两个缺点，一是不够语义化，它的含义是找到参数值的第一个出现位置，所以要去比较是否不等于-1，表达起来不够直观。二是，它内部使用严格相等运算符（===）进行判断，这会导致对NaN的误判。
+
+另外，Map 和 Set 数据结构有一个has方法，需要注意与includes区分。
+
+- Map 结构的has方法，是用来查找键名的，比如Map.prototype.has(key)、WeakMap.prototype.has(key)、Reflect.has(target, propertyKey)。
+- Set 结构的has方法，是用来查找值的，比如Set.prototype.has(value)、WeakSet.prototype.has(value)。
+
+## 9.数组实例方法 flat()、flatMap()
+
+flat方法用于将嵌套数组拉平，变成一维数组，该方法返回一个新数组，不会改变原数据。
+
+```js
+[1,2,[3,4],5].flat()
+// [1,2,3,4,5]
+```
+
+该方法默认只会拉平一层，可以将flat()方法的参数写成一个整数，用于表示拉平的层数，默认为1。
+
+```js
+[1,2,[3,[4,5]]].flat()
+// [1,2,3,[4,5]]
+
+[1,2,[3,[4,5]]].flat(2)
+// [1,2,3,4,5]
+```
+
+如果不管有多少层嵌套，都要转成一维数组，可以用Infinity关键字作为参数。
+
+```js
+[1, [2, [3]]].flat(Infinity)
+// [1, 2, 3]
+```
+
+如果原数组有空位，flat()方法会跳过空位。
+
+```js
+[1, 2, , 4, 5].flat()
+// [1, 2, 4, 5]
+```
+
+flatMap()方法对原数组的每个成员执行一个函数（相当于执行Array.prototype.map()），然后对返回值组成的数组执行flat()方法。该方法返回一个新数组，不改变原数组。
+
+```js
+[2,3,4].flatMap((x) => [x, x*2])
+// [2,4,3,6,4,8]
+
+// 相当于 [[2, 4], [3, 6], [4, 8]].flat()
+```
+
+flatMap()只能展开一层数组。
+
+flatMap()方法的参数是一个遍历函数，该函数可以接受三个参数，分别是当前数组成员、当前数组成员的位置（从零开始）、原数组。
+
+flatMap()方法还可以有第二个参数，用来绑定遍历函数里面的this。
+
+## 10.数组空位
+
+数组的空位指，数组的某一个位置没有任何值。比如，Array构造函数返回的数组都是空位。
+
+```js
+Array(3) // [ , , ]
+```
+
+ES5 对空位的处理，已经很不一致了，大多数情况下会忽略空位。
+
+- forEach(), filter(), reduce(), every() 和some()都会跳过空位。
+- map()会跳过空位，但会保留这个值
+- join()和toString()会将空位视为undefined，而undefined和null会被处理成空字符串。
+
+```js
+// forEach方法
+[,'a'].forEach((x,i) => console.log(i)); // 1
+
+// filter方法
+['a',,'b'].filter(x => true) // ['a','b']
+
+// every方法
+[,'a'].every(x => x==='a') // true
+
+// reduce方法
+[1,,2].reduce((x,y) => x+y) // 3
+
+// some方法
+[,'a'].some(x => x !== 'a') // false
+
+// map方法
+[,'a'].map(x => 1) // [,1]
+
+// join方法
+[,'a',undefined,null].join('#') // "#a##"
+
+// toString方法
+[,'a',undefined,null].toString() // ",a,,"
+```
+
+ES6 则是明确将空位转为undefined。
+
+Array.from方法会将数组的空位，转为undefined，也就是说，这个方法不会忽略空位。
+
+扩展运算符（...）也会将空位转为undefined。
+
+copyWithin()会连空位一起拷贝。
+
+fill()会将空位视为正常的数组位置。
+
+for...of循环也会遍历空位。
+
+```js
+Array.from(['a',,'b'])
+// [ "a", undefined, "b" ]
+
+[...['a',,'b']]
+// [ "a", undefined, "b" ]
+
+[,'a','b',,].copyWithin(2,0)
+// [,"a",,"a"]
+
+new Array(3).fill('a')
+// ["a","a","a"]
+
+let arr = [, ,];
+for (let i of arr) {
+  console.log(1);
+}
+// 1
+// 1
+```
+
+entries()、keys()、values()、find()和findIndex()会将空位处理成undefined。
+
+```js
+// entries()
+[...[,'a'].entries()] // [[0,undefined], [1,"a"]]
+
+// keys()
+[...[,'a'].keys()] // [0,1]
+
+// values()
+[...[,'a'].values()] // [undefined,"a"]
+
+// find()
+[,'a'].find(x => true) // undefined
+
+// findIndex()
+[,'a'].findIndex(x => true) // 0
+```
